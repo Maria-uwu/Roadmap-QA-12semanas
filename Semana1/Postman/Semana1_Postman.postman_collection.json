@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "c72a911c-a668-4cdd-86ce-e8ce71f4a681",
+		"name": "Semana1_Postman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33350109",
+		"_collection_link": "https://onlyme-5029.postman.co/workspace/Roadmap-QA~a8b24013-4a77-418c-b8f4-c2c24ae509ab/collection/33350109-c72a911c-a668-4cdd-86ce-e8ce71f4a681?action=share&source=collection_link&creator=33350109"
+	},
+	"item": [
+		{
+			"name": "Get Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+							"pm.test(\"Devuelve lista de usuarios\", () => {",
+							"  const data = pm.response.json();",
+							"  pm.expect(Array.isArray(data)).to.be.true;",
+							"  pm.expect(data.length).to.be.greaterThan(0);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 o 201\", () => {",
+							"    pm.expect([200, 201]).to.include(pm.response.code);",
+							"});pm.test(\"Devuelve token\", () => {",
+							"  const data = pm.response.json();",
+							"  pm.expect(data).to.have.property(\"token\");",
+							"  pm.environment.set(\"authToken\", data.token);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"mor_2314\",\n  \"password\": \"83r5^_\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://fakestoreapi.com/auth/login",
+					"protocol": "https",
+					"host": [
+						"fakestoreapi",
+						"com"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Cart (con token)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+							"",
+							"pm.test(\"Estructura básica OK\", () => {",
+							"  const data = pm.response.json();",
+							"  pm.expect(data).to.have.property(\"id\");",
+							"  pm.expect(data).to.have.property(\"userId\");",
+							"  pm.expect(data).to.have.property(\"products\");",
+							"  pm.expect(Array.isArray(data.products)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Productos tienen productId y quantity\", () => {",
+							"  const products = pm.response.json().products;",
+							"  products.forEach(p => {",
+							"    pm.expect(p).to.have.property(\"productId\");",
+							"    pm.expect(p).to.have.property(\"quantity\");",
+							"  });",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://fakestoreapi.com/carts/1",
+					"protocol": "https",
+					"host": [
+						"fakestoreapi",
+						"com"
+					],
+					"path": [
+						"carts",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
